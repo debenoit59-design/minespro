@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MinesPro - Jeu Mines</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .user {
+            text-align: center;
+        }
+
+        .user-email {
+            font-weight: bold;
+            margin-top: 8px;
+            word-break: break-word;
+        }
+
+        .demo-warning {
+            background: #fff3cd;
+            color: #664d03;
+            border: 1px solid #ffecb5;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 12px 5px;
+            text-align: center;
+        }
+
+        .stat-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            color: #1b5e20;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .cell {
+            aspect-ratio: 1 / 1;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+        }
+
+        .cell:active {
+            transform: scale(0.96);
+        }
+
+        .cell.opened {
+            background: #16a34a;
+            cursor: default;
+        }
+
+        .cell.mine {
+            background: #dc2626;
+            cursor: default;
+        }
+
+        .cell.disabled {
+            cursor: default;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button.action {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .new-game {
+            background: #2563eb;
+            color: white;
+        }
+
+        .home {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .logout {
+            background: #dc2626;
+            color: white;
+        }
+
+        .history-title {
+            margin-top: 0;
+        }
+
+        .history-item {
+            border-left: 4px solid #2563eb;
+            background: #f8fafc;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+            padding: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>💎 MinesPro</h1>
+</header>
+
+
+<div class="container">
+
+    <!-- COMPTE -->
+    <div class="card user">
+
+        <h2>🎯 Jeu Mines</h2>
+
+        <p>Démonstration interactive de MinesPro</p>
+
+        <div>
+            👤 <strong>Compte connecté</strong>
+        </div>
+
+        <div
+            id="userEmail"
+            class="user-email"
+        >
+            Vérification...
+        </div>
+
+        <div class="demo-warning">
+            ⚠️ <strong>Mode démonstration</strong><br>
+            Les pièces sont virtuelles.
+            Cette version ne permet aucun dépôt,
+            retrait ou gain d'argent réel.
+            Les résultats sont générés aléatoirement.
+        </div>
+
+    </div>
+
+
+    <!-- SOLDE ET STATISTIQUES -->
+    <div class="card">
+
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-title">
+                    Solde virtuel
+                </div>
+
+                <div
+                    id="balance"
+                    class="stat-value"
+                >
+                    1000 🪙
+                </div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-title">
+                    Partie
+                </div>
+
+                <div
+                    id="round"
+                    class="stat-value"
+                >
+                    1
+                </div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-title">
+                    Mines
+                </div>
+
+                <div
+                    id="mines"
+                    class="stat-value"
+                >
+                    5
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="stat" style="margin-top:10px;">
+
+            <div class="stat-title">
+                Cases ouvertes
+            </div>
+
+            <div
+                id="opened"
+                class="stat-value"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div
+            id="message"
+            class="message"
+        >
+            Connexion en cours...
+        </div>
+
+    </div>
+
+
+    <!-- GRILLE -->
+    <div class="card">
+
+        <h3>💎 Ouvrez les cases</h3>
+
+        <div
+            id="gameGrid"
+            class="grid"
+        ></div>
+
+
+        <div class="buttons">
+
+            <button
+                id="newGameBtn"
+                class="action new-game"
+            >
+                🔄 Nouvelle partie
+            </button>
+
+
+            <button
+                id="homeBtn"
+                class="action home"
+            >
+                🏠 Accueil
+            </button>
+
+
+            <button
+                id="logoutBtn"
+                class="action logout"
+            >
+                🚪 Se déconnecter
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- HISTORIQUE -->
+    <div class="card">
+
+        <h3 class="history-title">
+            📜 Historique des parties
+        </h3>
+
+        <div id="history">
+
+            <div class="empty">
+                Aucune partie terminée.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    💎 MinesPro — Version démonstration
+</footer>
+
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+    /* =====================================================
+       CONFIGURATION SUPABASE
+    ===================================================== */
+
+    const SUPABASE_URL =
+        "https://sodewninwjavmohlfbux.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_sIna3jnTX_GVHs7fxAWyPw_KJjHfucb";
+
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
+
+    const userEmailElement =
+        document.getElementById("userEmail");
+
+    const balanceElement =
+        document.getElementById("balance");
+
+    const roundElement =
+        document.getElementById("round");
+
+    const minesElement =
+        document.getElementById("mines");
+
+    const openedElement =
+        document.getElementById("opened");
+
+    const messageElement =
+        document.getElementById("message");
+
+    const gameGrid =
+        document.getElementById("gameGrid");
+
+    const historyElement =
+        document.getElementById("history");
+
+    const newGameButton =
+        document.getElementById("newGameBtn");
+
+    const homeButton =
+        document.getElementById("homeBtn");
+
+    const logoutButton =
+        document.getElementById("logoutBtn");
+
+
+    /* =====================================================
+       VARIABLES DU JEU
+    ===================================================== */
+
+    let currentUser = null;
+
+    let round =
+        parseInt(
+            localStorage.getItem(
+                "minespro_round"
+            ) || "1",
+            10
+        );
+
+    let opened = 0;
+
+    let balance = 1000;
+
+    let minePositions = [];
+
+    let gameOver = false;
+
+    const TOTAL_CELLS = 25;
+
+    const TOTAL_MINES = 5;
+
+
+    /* =====================================================
+       MESSAGE
+    ===================================================== */
+
+    function afficherMessage(message) {
+
+        messageElement.textContent = message;
+
+    }
+
+
+    /* =====================================================
+       VERIFIER LA CONNEXION
+    ===================================================== */
+
+    async function verifierConnexion() {
+
+        try {
+
+            const result =
+                await supabaseClient.auth.getUser();
+
+            const user =
+                result.data.user;
+
+            if (!user) {
+
+                window.location.href =
+                    "connexion.html";
+
+                return false;
+            }
+
+
+            currentUser = user;
+
+
+            userEmailElement.textContent =
+                user.email || "Utilisateur connecté";
+
+
+            afficherMessage(
+                "✅ Connexion vérifiée."
+            );
+
+
+            return true;
+
+        } catch (error) {
+
+            console.error(error);
+
+            afficherMessage(
+                "❌ Erreur de connexion."
+            );
+
+            return false;
+        }
+
+    }
+
+
+    /* =====================================================
+       GENERER LES MINES
+    ===================================================== */
+
+    function generateMines() {
+
+        minePositions = [];
+
+
+        while (
+            minePositions.length <
+            TOTAL_MINES
+        ) {
+
+            const randomPosition =
+                Math.floor(
+                    Math.random() *
+                    TOTAL_CELLS
+                );
+
+
+            if (
+                !minePositions.includes(
+                    randomPosition
+                )
+            ) {
+
+                minePositions.push(
+                    randomPosition
+                );
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CREER LA GRILLE
+    ===================================================== */
+
+    function createGrid() {
+
+        gameGrid.innerHTML = "";
+
+        generateMines();
+
+
+        for (
+            let i = 0;
+            i < TOTAL_CELLS;
+            i++
+        ) {
+
+            const cell =
+                document.createElement(
+                    "button"
+                );
+
+
+            cell.className =
+                "cell";
+
+
+            cell.textContent =
+                "💎";
+
+
+            cell.dataset.index =
+                i;
+
+
+            cell.addEventListener(
+                "click",
+                function() {
+
+                    openCell(i, cell);
+
+                }
+            );
+
+
+            gameGrid.appendChild(
+                cell
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       OUVRIR UNE CASE
+    ===================================================== */
+
+    function openCell(
+        index,
+        cell
+    ) {
+
+        if (gameOver) {
+            return;
+        }
+
+
+        if (
+            cell.classList.contains(
+                "opened"
+            )
+        ) {
+            return;
+        }
+
+
+        if (
+            cell.classList.contains(
+                "mine"
+            )
+        ) {
+            return;
+        }
+
+
+        if (
+            minePositions.includes(
+                index
+            )
+        ) {
+
+            cell.classList.add(
+                "mine"
+            );
+
+            cell.textContent =
+                "💣";
+
+
+            gameOver = true;
+
+
+            afficherToutesLesMines();
+
+
+            afficherMessage(
+                "💥 Mine trouvée ! Partie terminée."
+            );
+
+
+            enregistrerPartie(
+                "💥 Mine trouvée"
+            );
+
+
+            return;
+        }
+
+
+        cell.classList.add(
+            "opened"
+        );
+
+
+        cell.textContent =
+            "💎";
+
+
+        opened++;
+
+
+        openedElement.textContent =
+            opened;
+
+
+        if (
+            opened ===
+            TOTAL_CELLS -
+            TOTAL_MINES
+        ) {
+
+            gameOver = true;
+
+
+            afficherToutesLesMines();
+
+
+            afficherMessage(
+                "🎉 Félicitations ! Toutes les cases sûres sont ouvertes."
+            );
+
+
+            enregistrerPartie(
+                "🎉 Partie gagnée"
+            );
+
+
+            return;
+        }
+
+
+        afficherMessage(
+            "✅ Bonne case ! Continuez."
+        );
+
+    }
+
+
+    /* =====================================================
+       AFFICHER TOUTES LES MINES
+    ===================================================== */
+
+    function afficherToutesLesMines() {
+
+        const cells =
+            document.querySelectorAll(
+                ".cell"
+            );
+
+
+        cells.forEach(
+            function(cell) {
+
+                const index =
+                    parseInt(
+                        cell.dataset.index,
+                        10
+                    );
+
+
+                if (
+                    minePositions.includes(
+                        index
+                    )
+                ) {
+
+                    cell.classList.add(
+                        "mine"
+                    );
+
+                    cell.textContent =
+                        "💣";
+
+                }
+
+
+                cell.classList.add(
+                    "disabled"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ENREGISTRER LA PARTIE
+       HISTORIQUE LOCAL UNIQUEMENT
+    ===================================================== */
+
+    function enregistrerPartie(
+        resultat
+    ) {
+
+        const historique =
+            JSON.parse(
+                localStorage.getItem(
+                    "minespro_history"
+                ) || "[]"
+            );
+
+
+        const nouvellePartie = {
+
+            round: round,
+
+            resultat: resultat,
+
+            opened: opened,
+
+            date:
+                new Date().toLocaleString(
+                    "fr-FR"
+                )
+
+        };
+
+
+        historique.unshift(
+            nouvellePartie
+        );
+
+
+        localStorage.setItem(
+            "minespro_history",
+            JSON.stringify(
+                historique
+            )
+        );
+
+
+        chargerHistorique();
+
+    }
+
+
+    /* =====================================================
+       CHARGER L'HISTORIQUE
+    ===================================================== */
+
+    function chargerHistorique() {
+
+        const historique =
+            JSON.parse(
+                localStorage.getItem(
+                    "minespro_history"
+                ) || "[]"
+            );
+
+
+        if (
+            historique.length === 0
+        ) {
+
+            historyElement.innerHTML =
+                '<div class="empty">' +
+                "Aucune partie terminée." +
+                "</div>";
+
+            return;
+        }
+
+
+        historyElement.innerHTML =
+            "";
+
+
+        historique.forEach(
+            function(partie) {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "history-item";
+
+
+                item.innerHTML =
+                    "<strong>Partie " +
+                    partie.round +
+                    "</strong><br>" +
+                    partie.resultat +
+                    "<br>" +
+                    "Cases ouvertes : " +
+                    partie.opened +
+                    "<br>" +
+                    "<small>" +
+                    partie.date +
+                    "</small>";
+
+
+                historyElement.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       NOUVELLE PARTIE
+    ===================================================== */
+
+    function nouvellePartie() {
+
+        round++;
+
+
+        localStorage.setItem(
+            "minespro_round",
+            String(round)
+        );
+
+
+        opened = 0;
+
+        gameOver = false;
+
+
+        openedElement.textContent =
+            "0";
+
+
+        roundElement.textContent =
+            round;
+
+
+        minesElement.textContent =
+            TOTAL_MINES;
+
+
+        createGrid();
+
+
+        afficherMessage(
+            "🎯 Nouvelle partie démarrée."
+        );
+
+    }
+
+
+    /* =====================================================
+       DECONNEXION
+    ===================================================== */
+
+    async function deconnecter() {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "connexion.html";
+
+    }
+
+
+    /* =====================================================
+       BOUTONS
+    ===================================================== */
+
+    newGameButton.addEventListener(
+        "click",
+        nouvellePartie
+    );
+
+
+    homeButton.addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "index.html";
+
+        }
+    );
+
+
+    logoutButton.addEventListener(
+        "click",
+        deconnecter
+    );
+
+
+    /* =====================================================
+       DEMARRER LE JEU
+    ===================================================== */
+
+    async function demarrerJeu() {
+
+        const connecte =
+            await verifierConnexion();
+
+
+        if (!connecte) {
+            return;
+        }
+
+
+        roundElement.textContent =
+            round;
+
+
+        minesElement.textContent =
+            TOTAL_MINES;
+
+
+        openedElement.textContent =
+            "0";
+
+
+        balanceElement.textContent =
+            balance + " 🪙";
+
+
+        createGrid();
+
+
+        chargerHistorique();
+
+    }
+
+
+    /* =====================================================
+       LANCEMENT
+    ===================================================== */
+
+    demarrerJeu();
+
+</script>
+
+</body>
+</html>

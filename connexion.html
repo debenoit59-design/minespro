@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Connexion - MinesPro</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b14;
+            color: white;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 400px;
+            background: #111625;
+            border: 1px solid #29334a;
+            border-radius: 18px;
+            padding: 35px 25px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #9da6ba;
+            margin-bottom: 25px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #30394f;
+            border-radius: 10px;
+            background: #080b14;
+            color: white;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #6d8cff;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: #9da6ba;
+        }
+
+        .back {
+            display: block;
+            margin-top: 22px;
+            color: #7c9cff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <div class="login-box">
+
+            <div class="logo">💎 MinesPro</div>
+
+            <h1>Connexion</h1>
+
+            <p>Accédez à votre espace personnel.</p>
+
+            <form id="loginForm">
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Adresse e-mail"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Mot de passe"
+                    required
+                >
+
+                <button type="submit">
+                    Se connecter
+                </button>
+
+            </form>
+
+            <div id="message"></div>
+
+            <a class="back" href="index.html">
+                ← Retour à l'accueil
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+
+        const SUPABASE_URL =
+            "https://sodewninwjavmohlfbux.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_sIna3jnTX_GVHs7fxAWyPw_KJjHfucb";
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+
+        document
+            .getElementById("loginForm")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+                const email =
+                    document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+                const password =
+                    document
+                    .getElementById("password")
+                    .value;
+
+                const message =
+                    document.getElementById("message");
+
+                message.textContent =
+                    "Connexion en cours...";
+
+
+                const { data, error } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+
+                if (error) {
+
+                    message.textContent =
+                        "Erreur : " + error.message;
+
+                    return;
+                }
+
+
+                message.textContent =
+    "✅ Connexion réussie !";
+
+setTimeout(function() {
+    window.location.href = "index.html";
+}, 1000);
+
+                console.log(
+                    "Utilisateur connecté :",
+                    data.user
+                );
+
+            });
+
+    </script>
+
+</body>
+</html>
