@@ -13,39 +13,45 @@
         <div class="logo">💎 MinesPro</div>
 
         <button class="login-btn" onclick="window.location.href='connexion.html'">
-    Connexion
-</button>
-        </a>
+            Connexion
+        </button>
     </header>
 
     <main class="hero">
 
         <div class="badge">🚀 PLATEFORME MINES</div>
 
-        <h1>Bienvenue sur <span>MinesPro</span></h1>
-<div id="userWelcome" class="user-box">
-    👤 Compte connecté
-</div>
-</div>
+        <h1>
+            Bienvenue sur <span>MinesPro</span>
+        </h1>
 
-<a href="compte.html" class="account-btn">
-    👤 Mon compte
-</a>
+        <div id="userWelcome" class="user-box">
+            👤 Compte connecté
+        </div>
 
-<button onclick="deconnecterUtilisateur()" class="logout-btn">
-    🚪 Se déconnecter
-</button>
-</button>
+        <div class="account-actions">
+            <a href="compte.html" class="account-btn">
+                👤 Mon compte
+            </a>
+
+            <button onclick="deconnecterUtilisateur()" class="logout-btn">
+                🚪 Se déconnecter
+            </button>
+        </div>
+
         <p class="subtitle">
             Une interface simple et moderne pour découvrir le jeu Mines,
             suivre vos sessions et consulter vos informations.
         </p>
 
         <div class="buttons">
-    <a href="jeu.html" class="primary-btn">Commencer</a>
-   <button class="secondary-btn" onclick="window.location.href='apropos.html'">
-    En savoir plus
-</button>
+            <a href="jeu.html" class="primary-btn">
+                🎯 Commencer
+            </a>
+
+            <button class="secondary-btn" onclick="window.location.href='apropos.html'">
+                ℹ️ En savoir plus
+            </button>
         </div>
 
         <div class="cards">
@@ -53,19 +59,25 @@
             <div class="card">
                 <div class="icon">🎯</div>
                 <h3>Interface simple</h3>
-                <p>Une expérience claire et adaptée au téléphone.</p>
+                <p>
+                    Une expérience claire et adaptée au téléphone.
+                </p>
             </div>
 
             <div class="card">
                 <div class="icon">📊</div>
                 <h3>Suivi des sessions</h3>
-                <p>Consultez vos informations et votre activité.</p>
+                <p>
+                    Consultez vos informations et votre activité.
+                </p>
             </div>
 
             <div class="card">
                 <div class="icon">🔒</div>
                 <h3>Espace personnel</h3>
-                <p>Un espace conçu pour chaque utilisateur.</p>
+                <p>
+                    Un espace conçu pour chaque utilisateur.
+                </p>
             </div>
 
         </div>
@@ -75,12 +87,20 @@
             Jouez de manière responsable.
         </p>
 
+        <p class="warning">
+            💡 Cette version de MinesPro est une démonstration.
+            Les pièces sont virtuelles et aucun dépôt ou retrait d'argent réel
+            n'est disponible.
+        </p>
+
     </main>
 
     <footer>
         © 2026 MinesPro — Tous droits réservés.
     </footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+
 </body>
-</html>
+        </html>
