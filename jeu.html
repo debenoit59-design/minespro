@@ -72,6 +72,51 @@
             font-size: 14px;
         }
 
+        .prediction-box {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 18px;
+            text-align: center;
+        }
+
+        .prediction-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .prediction-result {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 12px 0;
+        }
+
+        .prediction-info {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .prediction-btn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 13px;
+            background: #4f46e5;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .prediction-btn:active {
+            transform: scale(0.98);
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -215,6 +260,7 @@
 <div class="container">
 
     <!-- COMPTE -->
+
     <div class="card user">
 
         <h2>🎯 Jeu Mines</h2>
@@ -234,21 +280,56 @@
 
         <div class="demo-warning">
             ⚠️ <strong>Mode démonstration</strong><br>
+
             Les pièces sont virtuelles.
             Cette version ne permet aucun dépôt,
             retrait ou gain d'argent réel.
             Les résultats sont générés aléatoirement.
         </div>
 
+
+        <!-- PREDICTION -->
+
+        <div class="prediction-box">
+
+            <div class="prediction-title">
+                🔮 Indication de démonstration
+            </div>
+
+            <div
+                id="predictionResult"
+                class="prediction-result"
+            >
+                Aucune indication
+            </div>
+
+            <div class="prediction-info">
+                Cette indication est générée aléatoirement
+                pour la démonstration. Elle ne prédit pas
+                réellement l'emplacement des mines et ne
+                garantit aucun résultat.
+            </div>
+
+            <button
+                id="predictionBtn"
+                class="prediction-btn"
+            >
+                🔮 Générer une indication
+            </button>
+
+        </div>
+
     </div>
 
 
     <!-- SOLDE ET STATISTIQUES -->
+
     <div class="card">
 
         <div class="stats">
 
             <div class="stat">
+
                 <div class="stat-title">
                     Solde virtuel
                 </div>
@@ -259,10 +340,12 @@
                 >
                     1000 🪙
                 </div>
+
             </div>
 
 
             <div class="stat">
+
                 <div class="stat-title">
                     Partie
                 </div>
@@ -273,10 +356,12 @@
                 >
                     1
                 </div>
+
             </div>
 
 
             <div class="stat">
+
                 <div class="stat-title">
                     Mines
                 </div>
@@ -287,12 +372,16 @@
                 >
                     5
                 </div>
+
             </div>
 
         </div>
 
 
-        <div class="stat" style="margin-top:10px;">
+        <div
+            class="stat"
+            style="margin-top:10px;"
+        >
 
             <div class="stat-title">
                 Cases ouvertes
@@ -319,6 +408,7 @@
 
 
     <!-- GRILLE -->
+
     <div class="card">
 
         <h3>💎 Ouvrez les cases</h3>
@@ -360,6 +450,7 @@
 
 
     <!-- HISTORIQUE -->
+
     <div class="card">
 
         <h3 class="history-title">
@@ -385,6 +476,7 @@
 
 
 <!-- SUPABASE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
@@ -444,6 +536,12 @@
 
     const logoutButton =
         document.getElementById("logoutBtn");
+
+    const predictionButton =
+        document.getElementById("predictionBtn");
+
+    const predictionResult =
+        document.getElementById("predictionResult");
 
 
     /* =====================================================
@@ -623,6 +721,111 @@
 
         }
 
+
+        predictionResult.textContent =
+            "Aucune indication";
+
+    }
+
+
+    /* =====================================================
+       INDICATION DE DEMONSTRATION
+    ===================================================== */
+
+    function genererIndication() {
+
+        if (gameOver) {
+
+            predictionResult.textContent =
+                "Partie terminée";
+
+            return;
+        }
+
+
+        const availableCells = [];
+
+
+        const cells =
+            document.querySelectorAll(
+                ".cell"
+            );
+
+
+        cells.forEach(
+            function(cell) {
+
+                const index =
+                    parseInt(
+                        cell.dataset.index,
+                        10
+                    );
+
+
+                if (
+                    !cell.classList.contains(
+                        "opened"
+                    ) &&
+                    !minePositions.includes(
+                        index
+                    )
+                ) {
+
+                    availableCells.push(
+                        index
+                    );
+
+                }
+
+            }
+        );
+
+
+        if (
+            availableCells.length === 0
+        ) {
+
+            predictionResult.textContent =
+                "Aucune case disponible";
+
+            return;
+        }
+
+
+        const randomIndex =
+            Math.floor(
+                Math.random() *
+                availableCells.length
+            );
+
+
+        const selectedCell =
+            availableCells[randomIndex];
+
+
+        const ligne =
+            Math.floor(
+                selectedCell / 5
+            ) + 1;
+
+
+        const colonne =
+            selectedCell % 5 + 1;
+
+
+        predictionResult.textContent =
+            "Case " +
+            (selectedCell + 1) +
+            " — ligne " +
+            ligne +
+            ", colonne " +
+            colonne;
+
+
+        afficherMessage(
+            "🔮 Indication de démonstration générée."
+        );
+
     }
 
 
@@ -643,15 +846,6 @@
         if (
             cell.classList.contains(
                 "opened"
-            )
-        ) {
-            return;
-        }
-
-
-        if (
-            cell.classList.contains(
-                "mine"
             )
         ) {
             return;
@@ -688,6 +882,10 @@
             );
 
 
+            predictionResult.textContent =
+                "Partie terminée";
+
+
             return;
         }
 
@@ -721,13 +919,17 @@
 
 
             afficherMessage(
-                "🎉 Félicitations ! Toutes les cases sûres sont ouvertes."
+                "🎉 Toutes les cases sûres sont ouvertes."
             );
 
 
             enregistrerPartie(
                 "🎉 Partie gagnée"
             );
+
+
+            predictionResult.textContent =
+                "Partie terminée";
 
 
             return;
@@ -791,7 +993,6 @@
 
     /* =====================================================
        ENREGISTRER LA PARTIE
-       HISTORIQUE LOCAL UNIQUEMENT
     ===================================================== */
 
     function enregistrerPartie(
@@ -988,6 +1189,12 @@
     logoutButton.addEventListener(
         "click",
         deconnecter
+    );
+
+
+    predictionButton.addEventListener(
+        "click",
+        genererIndication
     );
 
 
